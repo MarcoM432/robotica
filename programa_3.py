@@ -1,12 +1,31 @@
 #Programa 3 
 #Simulacion de un robot diferencial
 from Libreria_Global import*
+import random
 #Para navegar en el simulador
 #usamos las flechas del teclado
 #la tecla K para vista aerea
 
 #la tecla L para vista 3D
+def Simula_Robot_diff(Robot,dt,wR,wL):
+    R = Robot.radio #radio en metros de la rueda 
+    L = Robot.L #distancia entre las ruedas en metros
+    teta = Robot.teta
 
+    a = np.array([  [R*math.cos(teta)/2, R*math.cos(teta)/2],
+                [R*math.sin(teta)/2, R*math.sin(teta)/2],
+                [R/L          , -R/L         ]  ])
+
+    b = np.array([  [wR],
+                [wL]    ])
+
+    c = a@b
+    dx = c[0][0]
+    dy = c[1][0]
+    dteta = c[2][0]
+    Robot.x = integrador_euler(Robot.x, dt, dx)
+    Robot.y = integrador_euler(Robot.y, dt, dy)
+    Robot.teta = integrador_euler(Robot.teta, dt, dteta)
 
 #Variables del simulador
 vec_data=[]
@@ -95,6 +114,9 @@ while token==0:
 
     #Aqui me encuentro dentro de la simulacion---------------------
     vec_t.append(t_acumulado)
+    wL = random.randint(-100,100)
+    wR = random.randint(-100,100)
+    Simula_Robot_diff(Robot_1,dt,wR,wL)
                 
                 
     #COMIENZA DIBUJO---------------------------------------------------------        
